@@ -72,10 +72,10 @@ WITH ordered AS (
         COALESCE(after, before) AS record
       , op
       , ts_ms
-      , ROW_NUMBER() OVER (PARTITION BY after.id ORDER BY ts_ms DESC) AS row_num
+      , ROW_NUMBER() OVER (PARTITION BY COALESCE(after, before).id ORDER BY ts_ms DESC) AS row_num
     FROM debezium.cdc.addresses
 )
-SELECT record, op, cast(from_unixtime_nanos(ts_ms * 1000) AS timestamp(6)) AS ts
+SELECT record, op, cast(at_timezone(from_unixtime_nanos(ts_ms * 1000000), 'UTC') AS timestamp(3)) AS ts
 FROM ordered
 WHERE row_num = 1;
 
@@ -140,10 +140,10 @@ WITH ordered AS (
         COALESCE(after, before) AS record
       , op
       , ts_ms
-      , ROW_NUMBER() OVER (PARTITION BY after.id ORDER BY ts_ms DESC) AS row_num
+      , ROW_NUMBER() OVER (PARTITION BY COALESCE(after, before).id ORDER BY ts_ms DESC) AS row_num
     FROM debezium.cdc.products
 )
-SELECT record, op, cast(from_unixtime_nanos(ts_ms * 1000) AS timestamp(6)) AS ts
+SELECT record, op, cast(at_timezone(from_unixtime_nanos(ts_ms * 1000000), 'UTC') AS timestamp(3)) AS ts
 FROM ordered
 WHERE row_num = 1;
 

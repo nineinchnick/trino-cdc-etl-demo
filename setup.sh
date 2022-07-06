@@ -179,7 +179,7 @@ until docker inspect ${prefix}trino --format "{{json .State.Health.Status }}" | 
 
 echo "Loading schema"
 # load schema as the admin user which will own all objects
-docker exec -i ${prefix}trino trino --user=admin < schema.sql
+docker exec -i ${prefix}trino java -Dorg.jline.terminal.dumb=true -jar /usr/bin/trino --user=admin < schema.sql
 
 echo "All done!"
 
